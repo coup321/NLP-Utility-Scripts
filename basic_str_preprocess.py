@@ -106,7 +106,7 @@ class BasicTokenizer:
 
         n = len(nums)
         #create zero array of shape(num_words, vocab_size)
-        encoding = np.encoding((len(self.vocab),n))
+        encoding = np.zeros((len(self.vocab),n))
         #for each word, make it's index = 1 (for the one hot encoding)
         for i in range(n):
             encoding[nums[i]][i] = 1
