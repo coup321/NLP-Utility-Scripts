@@ -133,3 +133,44 @@ class BasicTokenizer:
             if num == number:
                 return word
         return None
+
+class BagOfWordsTokenizer(BasicTokenizer):
+    """
+    Creates bag of words representation of an input text.
+    Inputs - text, str
+
+    Attrs:
+        self.text
+        self.vocab (default None, generated with function calls)
+
+    Methods 
+        - tokenize -> returns bag of words (list of ints)
+
+    Inherited Methods
+        - _build_vocab(self) - generates vocab based on self.text
+        - word2num(word) - generates the word index number (ex: the -> 5)
+        - num2word(nuM) - generates the word from a word index number (ex: 5 -> the)
+
+    Use example:
+    text = 'the the big cat ran over the lazy dog and then the dog cowered'
+    tok = BagOfWordsTokenizer(text)
+    print(tok.tokenize()
+    > [1. 1. 1. 1. 1. 2. 1. 4. 1. 1.]
+    """
+    def __init__(self, text):
+        super().__init__(text)
+
+    def tokenize(self):
+        if not self.vocab:
+            self._build_vocab()
+
+        #converts list of words to list of numbers (ints)
+        nums = [self.word2num(w) for w in self.text.split(' ')]
+
+        n = len(nums)
+        #create zero array of shape(vocab_size)
+        encoding = np.zeros((len(self.vocab)))
+        #for each num (aka: word) add 1 to it's index in the encoding
+        for i in range(n):
+            encoding[nums[i]] += 1
+        return encoding #shape(vocab_size)    
