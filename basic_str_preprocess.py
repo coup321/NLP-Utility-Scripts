@@ -1,3 +1,10 @@
+"""
+Contains classes
+    - BasicTextCleaner: removes digits, punctuation, stopwords in a string
+    - BasicTokenizer: creates one hot encoding of sentences
+    - BagOfWordsTokenizer: creates bag of words representation (1-grams) of string
+"""
+
 import numpy as np
 import nltk
 import functools
