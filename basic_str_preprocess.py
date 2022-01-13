@@ -3,6 +3,7 @@ Contains classes
     - BasicTextCleaner: removes digits, punctuation, stopwords in a string
     - BasicTokenizer: creates one hot encoding of sentences
     - BagOfWordsTokenizer: creates bag of words representation (1-grams) of string
+    - BagofNGrams: tokenizer to make bag of ngrams embedding represntation of a string
 """
 
 import numpy as np
@@ -181,3 +182,76 @@ class BagOfWordsTokenizer(BasicTokenizer):
         for i in range(n):
             encoding[nums[i]] += 1
         return encoding #shape(vocab_size)    
+
+class BagofNGrams(BasicTokenizer):
+    """
+    Tokenizer to make ngrams
+    Inputs:
+        text - str
+        n - int how big grams should be
+    Attrs:
+        self.text - str, input text
+        self.vocab - default none, set to dict(tuple:int) by _build_vocab
+        self.n - int, how big grams should be
+    
+    Methods:
+        get_ngrams - returns list of tuples of ngrams in self.text
+        _build_vocab(self, corpus=None)
+            - builds ngram dict (vocab)
+            - if corpus = str, will create new vocab dict
+        tokenize(self, text=None)
+            - returns embedding of self.text
+            - if text = str, will initialize new vocab dict
+
+    Inherited methods:
+        - word2num(ngram) - generates the ngram index number (ex: the -> 5)
+        - num2word(num) - generates the ngram from a ngram index number (ex: 5 -> the)
+
+
+    Example usage to make 2grams:
+    s = 'James is the best person ever the best person ever'
+    tok = BagofNGrams(s, 2)
+    print(tok.tokenize())
+    """
+    def __init__(self, text, n):
+        super().__init__(text)
+        self.n = n
+
+    def get_ngrams(self):
+        words = self.text.split()
+        return [tuple(words[i:i+self.n]) for i in range(len(words)-self.n)]
+
+    def _build_vocab(self, corpus=None):
+        if corpus:
+            self.text = corpus
+
+        self.vocab = {ngram:num for num, ngram in enumerate(set(self.get_ngrams()))}
+
+    def tokenize(self, text=None):
+        if not self.vocab:
+            self._build_vocab(corpus = text)
+
+        nums = [self.word2num(ngram) for ngram in self.get_ngrams()]
+
+        #create zero array of shape(vocab_size)
+        encoding = np.zeros((len(self.vocab)))
+        #for each num (aka: word) add 1 to it's index in the encoding
+        for i in range(len(nums)):
+            encoding[nums[i]] += 1
+        return encoding #shape(vocab_size)    
+
+class TF_IDF_Tokenizer:
+    def __init__(self, corpus, text=None):
+        self.corpus = corpus
+        self.text = text
+        self.vocab = self.set_vocab()
+        self.vocab_size = self.set_vocab_size()
+
+    def TF-IDF(self.word):
+        pass
+    
+    def set_vocab_size(self):
+        return 
+
+
+        
