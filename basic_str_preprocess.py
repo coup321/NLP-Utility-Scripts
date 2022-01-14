@@ -241,17 +241,62 @@ class BagofNGrams(BasicTokenizer):
         return encoding #shape(vocab_size)    
 
 class TF_IDF_Tokenizer:
-    def __init__(self, corpus, text=None):
-        self.corpus = corpus
-        self.text = text
-        self.vocab = self.set_vocab()
-        self.vocab_size = self.set_vocab_size()
+    """
+    This is a tokenizer that takes a list of strings (a corpus of documents).
+    It generates a vocabulary then returns an embedding vector for a document
+    based on this vocab with calculated TF-IDF.
 
-    def TF-IDF(self.word):
-        pass
+    Inputs
+        - corpus = list of strings
     
-    def set_vocab_size(self):
-        return 
+    Attrs
+        - self.corpus = list of strings
+        - self.vocab = dictionary{string : int} indicating a unique index for a word
+    
+    Methods:
+        - get_TF(self, term : string, document : string) -> float
+        - get_IDF(self, term : string) -> float
+        - set_vocab(self) -> dict{string : int}
+        - tokenize(self, document : string) -> np.array (embedding)
+
+    Example usage:    
+        corpus = [
+        'the quick brown fox jumped over the lazy dog',
+        'jack and jill walked around the hill',
+        'opportunity favors the prepared mind'
+        ]
+        print(TF_IDF_Tokenizer(corpus).tokenize(corpus[0]))
+        print(TF_IDF_Tokenizer(corpus).tokenize(corpus[1]))
+    """
+    def __init__(self, corpus):
+        self.corpus = corpus
+        self.vocab = self.set_vocab()
+
+    def get_TF(self, term, document):
+        words = document.split()
+        return sum(term == word for word in words) / len(words)
+    
+    def get_IDF(self, term):
+        num_documents = len(self.corpus)
+        num_docs_with_term = sum(term in doc for doc in self.corpus)
+        return np.log(num_documents / num_docs_with_term)
+    
+    def set_vocab(self):
+        vocab = set()
+        for doc in self.corpus:
+            for w in doc.split():
+                vocab.add(w)
+        return {word:num for num, word in enumerate(vocab)}
+
+    def tokenize(self, document):
+        embedding = np.zeros(len(self.vocab))
+        for term in document.split():
+            TF = self.get_TF(term, document)
+            IDF = self.get_IDF(term)
+            embedding[self.vocab[term]] = TF * IDF
+        return embedding
+
+
 
 
         
